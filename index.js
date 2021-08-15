@@ -20,7 +20,7 @@ let suitBet = { P1: null, P2: null, P3: null, P4: null }
 let turns = { P1: true, P2: false, P3: false, P4: false }
 let nextTurn = { P1: 'P2', P2: "P3", P3: 'P4', P4: 'P1' }
 let numBet;
-let sliceingSuit, minBet, playerNum;
+let sliceingSuit, minBet, playerNum, payLoad;
 const playerPointer = { "0": "P1", "1": "P2", "2": "P3", "3": "P4" };
 
 
@@ -39,10 +39,13 @@ wsServer.on("request", request => {
             games[gameId] = {
                 "id": gameId,
                 "max_players": 4,
-                "clients": []
+                "clients": [{
+                    "clientId": clientId,
+                    "playerNum": "P1"
+                }]
             }
 
-            const payLoad = {
+            payLoad = {
                 "method": "create",
                 "game": games[gameId]
             }
@@ -68,27 +71,8 @@ wsServer.on("request", request => {
                 "clientId": clientId,
                 "playerNum": playerNum
             })
-            //start the game
-            if (game.clients.length === 4) {
-                let newDeck = readyDeck();
-                game.clients.forEach((client) => {
-                    playerNum = client.playerNum;
-                    let playerCards = dealCards(newDeck);
-                    let payload = {
-                        "method": "updateCards",
-                        "cards": playerCards,
-                        "playerNum": "P1"
-                    }
-                    client.connection.send(JSON.stringify(payLoad))
-                    payload = {
-                        "method": "suitBet"
-                    }
-                    client.connection.send(JSON.stringify(payLoad))
-                })
-            }
-            //startGame();
 
-            const payLoad = {
+            payLoad = {
                 "method": "playerJoined",
                 "game": game,
                 "clientId": clientId
@@ -97,6 +81,27 @@ wsServer.on("request", request => {
             game.clients.forEach(c => {
                 clients[c.clientId].connection.send(JSON.stringify(payLoad))
             })
+
+            //start the game
+            if (game.clients.length === 4) {
+                //startGame();
+                let newDeck = readyDeck();
+                game.clients.forEach((client) => {
+                    playerNum = client.playerNum;
+                    let playerCards = dealCards(newDeck);
+                    payLoad = {
+                        "method": "updateCards",
+                        "cards": playerCards,
+                        "playerNum": playerNum
+                    }
+                    clients[client.clientId].connection.send(JSON.stringify(payLoad))
+                    payLoad = {
+                        "method": "suitBet",
+                        "playerNum": 'P1'
+                    }
+                    clients[client.clientId].connection.send(JSON.stringify(payLoad))
+                })
+            }
         }
 
         if (messageFromClient.method === "suitBet") {
@@ -109,7 +114,7 @@ wsServer.on("request", request => {
             if (countValue('PASS', betCount) === 3 && countValue(null, betCount) === 0) {
                 sliceingSuit = suitBet[playerNum][1];
                 minBet = suitBet[playerNum][0];
-                const payLoad = {
+                payLoad = {
                     "method": "numBet",
                     "sliceingSuit": sliceingSuit,
                     "minBet": minBet,
@@ -117,7 +122,7 @@ wsServer.on("request", request => {
                 }
             }
             else{
-                const payLoad = {
+                payLoad = {
                     "method": "suitBet",
                     "suitBet": suitBet,
                     "turn": nextTurn[playerNum]
@@ -156,7 +161,7 @@ wsServer.on("request", request => {
         "connection": connection
     }
 
-    const payLoad = {
+    payLoad = {
         "method": "connect",
         "clientId": clientId
     }

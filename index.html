@@ -51,6 +51,9 @@
                 gameId = response.game.id;
                 console.log(`player ${clientId} has entered game ${gameId}`)
             }
+            if (response.method === "updateCards"){
+                console.log(response.cards)
+            }
         }
             </script>
 </body>
