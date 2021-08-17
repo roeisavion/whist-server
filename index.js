@@ -16,10 +16,11 @@ const wsServer = new websocketServer({
 })
 const clients = {};
 const games = {};
+let cardMap = {};
 let suitBet = { P1: null, P2: null, P3: null, P4: null }
 let turns = { P1: true, P2: false, P3: false, P4: false }
 let nextTurn = { P1: 'P2', P2: "P3", P3: 'P4', P4: 'P1' }
-let numBet;
+let numBet = { P1: null, P2: null, P3: null, P4: null };
 let sliceingSuit, minBet, playerNum, payLoad;
 const playerPointer = { "0": "P1", "1": "P2", "2": "P3", "3": "P4" };
 
@@ -89,15 +90,19 @@ wsServer.on("request", request => {
                 game.clients.forEach((client) => {
                     playerNum = client.playerNum;
                     let playerCards = dealCards(newDeck);
+                    cardMap[playerNum] = playerCards;
+                });
+                game.clients.forEach((client) => {
+                    playerNum = client.playerNum;
                     payLoad = {
                         "method": "updateCards",
-                        "cards": playerCards,
+                        "cardsMap": cardMap,
                         "playerNum": playerNum
                     }
                     clients[client.clientId].connection.send(JSON.stringify(payLoad))
                     payLoad = {
                         "method": "suitBet",
-                        "playerNum": 'P1'
+                        "turn": 'P1'
                     }
                     clients[client.clientId].connection.send(JSON.stringify(payLoad))
                 })
@@ -121,7 +126,7 @@ wsServer.on("request", request => {
                     "turn": playerNum
                 }
             }
-            else{
+            else {
                 payLoad = {
                     "method": "suitBet",
                     "suitBet": suitBet,
@@ -134,7 +139,31 @@ wsServer.on("request", request => {
         }
 
         if (messageFromClient.method === "numBet") {
-            
+            numBet[messageFromClient.playerNum] = messageFromClient.numBet;
+            if (countValue(null, Object.values(numBet)) > 0) {
+                payLoad = {
+                    "method": "numBet",
+                    "turn": nextTurn[playerNum],
+                    "numBet": numBet
+                }
+                game.clients.forEach(c => {
+                    clients[c.clientId].connection.send(JSON.stringify(payLoad))
+                })
+            }
+            else{
+                payLoad = {
+                    "method": "numBet",
+                    "numBet": numBet
+                }
+                game.clients.forEach(c => {
+                    clients[c.clientId].connection.send(JSON.stringify(payLoad))
+                })
+                payLoad = {
+                    "method": "play",
+                    "turn" : nextTurn[playerNum]
+                }
+                
+            }
         }
 
 
@@ -167,13 +196,25 @@ wsServer.on("request", request => {
     }
     //send back the client connect
     connection.send(JSON.stringify(payLoad))
-
 })
 
 const countValue = (value, array) => {
     let count = 0;
     array.forEach(v => value === v ? count++ : null)
     return count;
+}
+
+const screenCards = (playerNum, cardMap) => {
+    let cardsMapToSend = {};
+    Object.keys(cardMap).forEach((k) => {
+        if (k === playerNum) {
+            cardsMapToSend[k] = cardMap[k];
+        }
+        else {
+            cardsMapToSend[k] = cardMap[k].length;
+        }
+        return cardsMapToSend;
+    })
 }
 
 
