@@ -16,7 +16,7 @@ const wsServer = new websocketServer({
 })
 const clients = {};
 const games = {};
-let cardMap = {};
+let cardsMap = {}, screenedCards;
 let suitBet = { P1: null, P2: null, P3: null, P4: null }
 let turns = { P1: true, P2: false, P3: false, P4: false }
 let nextTurn = { P1: 'P2', P2: "P3", P3: 'P4', P4: 'P1' }
@@ -76,7 +76,8 @@ wsServer.on("request", request => {
             payLoad = {
                 "method": "playerJoined",
                 "game": game,
-                "clientId": clientId
+                "clientId": clientId,
+                "playerNum" : playerNum
             }
             //loop through all clients and tell them that people has joined
             game.clients.forEach(c => {
@@ -90,13 +91,15 @@ wsServer.on("request", request => {
                 game.clients.forEach((client) => {
                     playerNum = client.playerNum;
                     let playerCards = dealCards(newDeck);
-                    cardMap[playerNum] = playerCards;
+                    cardsMap[playerNum] = playerCards;
                 });
                 game.clients.forEach((client) => {
                     playerNum = client.playerNum;
+                    screenedCards = screenCards(playerNum,cardsMap);
+                    console.log('aaa')
                     payLoad = {
                         "method": "updateCards",
-                        "cardsMap": cardMap,
+                        "cardsMap": screenedCards,
                         "playerNum": playerNum
                     }
                     clients[client.clientId].connection.send(JSON.stringify(payLoad))
@@ -213,8 +216,8 @@ const screenCards = (playerNum, cardMap) => {
         else {
             cardsMapToSend[k] = cardMap[k].length;
         }
-        return cardsMapToSend;
     })
+    return cardsMapToSend;
 }
 
 
