@@ -1,10 +1,10 @@
-const number = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
-const suit = ['C','D','S','H'];
+export const cardsNumberOrder = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
+export const suitOrder = ['C','D','S','H'];
 
 export const createDeck = () => {
     let deck = []
-    for (let num of number){
-        for (let s of suit){
+    for (let num of cardsNumberOrder){
+        for (let s of suitOrder){
             deck.push(num+s)
         }
     }

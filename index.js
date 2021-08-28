@@ -3,6 +3,7 @@ import * as ws from 'websocket';
 import express from 'express';
 import { guid, gameGuid, clientGuid } from './guid.js'
 import { readyDeck, dealCards } from './deck.js';
+import { caculateRoundWinner } from './gameFunctions.js';
 
 const httpServer = http.createServer();
 httpServer.listen(9090, () => console.log("Listening.. on 9090"))
@@ -15,13 +16,14 @@ const wsServer = new websocketServer({
     "httpServer": httpServer
 })
 const clients = {};
-const games = {};
+let games = {};
 let cardsMap = {}, screenedCards;
 let suitBet = { P1: null, P2: null, P3: null, P4: null }
+let winnedCards = { P1: [], P2: [], P3: [], P4: [] }
 let turns = { P1: true, P2: false, P3: false, P4: false }
 let nextTurn = { P1: 'P2', P2: "P3", P3: 'P4', P4: 'P1' }
 let numBet = { P1: null, P2: null, P3: null, P4: null };
-let sliceingSuit, minBet, playerNum, payLoad;
+let sliceingSuit, minBet, playerNum, payLoad, playerPlayed, cardPlayed, turn, currentHand, newHand, game;
 const playerPointer = { "0": "P1", "1": "P2", "2": "P3", "3": "P4" };
 
 
@@ -29,7 +31,10 @@ wsServer.on("request", request => {
     //connect
     const connection = request.accept(null, request.origin);
     connection.on("open", () => console.log("opened!"))
-    connection.on("close", () => console.log("closed!"))
+    connection.on("close", () => {
+        games = {};
+        console.log("closed!")
+    })
     connection.on("message", message => {
         const messageFromClient = JSON.parse(message.utf8Data)
         //I have received a message from the client
@@ -48,7 +53,8 @@ wsServer.on("request", request => {
 
             payLoad = {
                 "method": "create",
-                "game": games[gameId]
+                "game": games[gameId],
+                "playerNum": "P1"
             }
 
             const con = clients[clientId].connection;
@@ -60,7 +66,7 @@ wsServer.on("request", request => {
 
             const clientId = messageFromClient.clientId;
             const gameId = messageFromClient.gameId;
-            const game = games[gameId];
+            game = games[gameId];
             if (game.clients.length >= 4) {
                 //sorry max players reach
                 return;
@@ -77,7 +83,7 @@ wsServer.on("request", request => {
                 "method": "playerJoined",
                 "game": game,
                 "clientId": clientId,
-                "playerNum" : playerNum
+                "playerNum": playerNum
             }
             //loop through all clients and tell them that people has joined
             game.clients.forEach(c => {
@@ -92,15 +98,17 @@ wsServer.on("request", request => {
                     playerNum = client.playerNum;
                     let playerCards = dealCards(newDeck);
                     cardsMap[playerNum] = playerCards;
+                    cardsMap["center"] = [];
                 });
                 game.clients.forEach((client) => {
                     playerNum = client.playerNum;
-                    screenedCards = screenCards(playerNum,cardsMap);
+                    screenedCards = screenCards(playerNum, cardsMap);
                     console.log('aaa')
                     payLoad = {
                         "method": "updateCards",
                         "cardsMap": screenedCards,
-                        "playerNum": playerNum
+                        "playerNum": playerNum,
+                        "turn": 'P1' /// need to delete
                     }
                     clients[client.clientId].connection.send(JSON.stringify(payLoad))
                     payLoad = {
@@ -153,7 +161,7 @@ wsServer.on("request", request => {
                     clients[c.clientId].connection.send(JSON.stringify(payLoad))
                 })
             }
-            else{
+            else {
                 payLoad = {
                     "method": "numBet",
                     "numBet": numBet
@@ -163,27 +171,42 @@ wsServer.on("request", request => {
                 })
                 payLoad = {
                     "method": "play",
-                    "turn" : nextTurn[playerNum]
+                    "turn": nextTurn[playerNum]
                 }
-                
+
             }
         }
+        if (messageFromClient.method === "updateCards") {
+            playerPlayed = messageFromClient.playerPlayed;
+            cardPlayed = messageFromClient.cardPlayed;
+            currentHand = cardsMap[playerPlayed];
+            newHand = removeCard(cardPlayed, currentHand);
+            cardsMap[playerPlayed] = newHand;
+            cardsMap["center"].push([cardPlayed, playerPlayed]);
+            turn = nextTurn[playerPlayed];
+
+            if (cardsMap["center"].length === 4) {
+                let winCard = caculateRoundWinner(cardsMap["center"])
+                let winPlayer = winCard[1];
+                winnedCards[winPlayer].push(winCard[0]);
+                cardsMap["center"] = [];
+                turn = winPlayer;
+            }
 
 
-
-        // //a user plays
-        // if (result.method === "play") {
-        //     const gameId = result.gameId;
-        //     const ballId = result.ballId;
-        //     const color = result.color;
-        //     let state = games[gameId].state;
-        //     if (!state)
-        //         state = {}
-
-        //     state[ballId] = color;
-        //     games[gameId].state = state;
-
-        // }
+            game.clients.forEach((client) => {
+                playerNum = client.playerNum;
+                screenedCards = screenCards(playerNum, cardsMap);
+                payLoad = {
+                    "method": "updateCards",
+                    "cardsMap": screenedCards,
+                    "playerNum": playerNum,
+                    "turn": turn,
+                    "winnedCards": winnedCards
+                }
+                clients[client.clientId].connection.send(JSON.stringify(payLoad))
+            })
+        }
 
     })
 
@@ -210,7 +233,7 @@ const countValue = (value, array) => {
 const screenCards = (playerNum, cardMap) => {
     let cardsMapToSend = {};
     Object.keys(cardMap).forEach((k) => {
-        if (k === playerNum) {
+        if (k === playerNum || k === "center") {
             cardsMapToSend[k] = cardMap[k];
         }
         else {
@@ -220,35 +243,20 @@ const screenCards = (playerNum, cardMap) => {
     return cardsMapToSend;
 }
 
+const removeCard = (cardPlayed, currentHand) => {
+    return currentHand.filter(currentCard => currentCard !== cardPlayed)
+}
+
+
+
+
 
 // const createGame
-
-
-// const methodPointer = {
-//     "connect" : connectToServer(),
-//     "create" : createGame(),
-//     "join" : joinGame(),
-// }
-
 
 
 // function startGame(){
 //     let newDeck = readyDeck();
 
-
-    //{"gameid", fasdfsf}
-//     for (const g of Object.keys(games)) {
-//         const game = games[g]
-//         const payLoad = {
-//             "method": "update",
-//             "game": game
-//         }
-
-//         game.clients.forEach(c=> {
-//             clients[c.clientId].connection.send(JSON.stringify(payLoad))
-//         })
-//     }
-// }
 
 
 
