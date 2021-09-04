@@ -19,7 +19,8 @@ const clients = {};
 let games = {};
 let cardsMap = {}, screenedCards;
 let suitBet = { P1: null, P2: null, P3: null, P4: null }
-let winnedCards = { P1: [], P2: [], P3: [], P4: [] }
+//let winnedCards = { P1: [], P2: [], P3: [], P4: [] }
+let winnedCards ;
 let turns = { P1: true, P2: false, P3: false, P4: false }
 let nextTurn = { P1: 'P2', P2: "P3", P3: 'P4', P4: 'P1' }
 let numBet = { P1: null, P2: null, P3: null, P4: null };
@@ -42,6 +43,7 @@ wsServer.on("request", request => {
         if (messageFromClient.method === "create") {
             const clientId = messageFromClient.clientId;
             const gameId = gameGuid();
+            winnedCards = { P1: [], P2: [], P3: [], P4: [] }
             games[gameId] = {
                 "id": gameId,
                 "max_players": 4,
