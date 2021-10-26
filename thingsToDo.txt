@@ -1,0 +1,2 @@
+1. check how to re - connect a player if he re-enter the game.
+להתמודד עם ניתוק של שחקן בכללי, ממה להסיר אותו כשי שהשרת לא יחטוף אנדפיינד.
