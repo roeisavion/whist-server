@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 export const countValue = (value, array) => {
     let count = 0;
     array.forEach(v => value === v ? count++ : null)
@@ -35,3 +37,17 @@ export const scoreCaculator = (bets,wins,scoreMap,isUnder) => {
     });
     return scoreMap;
 }
+
+export const isGameFinished = (cardsMap) => {
+    let isFinished = true;
+    Object.values(cardsMap).forEach(cards =>{
+        if(!_.isEmpty(cards)){
+            isFinished = false;
+        }
+    })
+    return isFinished;
+}
+
+export function getKeyByValue(object, value) {
+    return Object.keys(object).find(key => object[key] === value);
+  }

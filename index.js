@@ -2,25 +2,26 @@ import http from 'http';
 import * as ws from 'websocket';
 import express from 'express';
 import { gameGuid, clientGuid } from './guid.js'
-import { readyDeck, dealCards } from './deck.js';
+import { readyDeck, dealCards } from './helpers/deck.js';
 import { caculateRoundWinner, getNumber, getSuit, nextBettingPlayer } from './gameFunctions.js';
-import { countValue, screenCards, getSuitBetWinner, removeCard, scoreCaculator } from './helpers.js';
+import { countValue, screenCards, getSuitBetWinner, removeCard, scoreCaculator, isGameFinished, getKeyByValue } from './helpers.js';
+import _ from 'lodash'; 
+
 
 const httpServer = http.createServer();
 httpServer.listen(9090, () => console.log("Listening.. on 9090"))
 const app = express()
-app.listen(9091, () => console.log("Listening on http port 9091"))
-//app.get("/", (req, res) => res.sendFile("C:/Users/Saba/Desktop/ws-server/index.html"))
+let port; 
+(process.env.PORT==null || process.env.PORT =="") ? port = 9091 : port = process.env.PORT ;
+app.listen(port, () => console.log("Listening on http port 9091"))
 const websocketServer = ws.server;
-// const websocketServer = new ws.server;
 const wsServer = new websocketServer({
-    "httpServer": httpServer
+    httpServer
 })
 
 const clients = {};
 let games = {}, screenedCards;
 const nextTurn = { P1: 'P2', P2: "P3", P3: 'P4', P4: 'P1' }
-let score = { P1: 0, P2: 0, P3: 0, P4: 0 }
 let sliceingSuit, minBet, playerNum, payLoad, playerPlayed, cardPlayed, turn, currentHand, newHand, game;
 const playerPointer = { "0": "P1", "1": "P2", "2": "P3", "3": "P4" };
 
@@ -30,6 +31,9 @@ wsServer.on("request", request => {
     //need to give connection clientID
     connection.on("open", () => console.log("opened!"))
     connection.on("close", () => {
+        // let clientIdToDelete = getKeyByValue(clients,connection)
+
+
         // games = {};
         //need to remove client from game
         //connections.splice(connections.indexOf(connection), 1)
@@ -88,7 +92,8 @@ wsServer.on("request", request => {
                 payLoad = {
                     "method": "leftGame",
                     gameId,
-                    nickname
+                    nickname,
+                    clientId
                 }
                 clients[clientId].connection.send(JSON.stringify(payLoad))
                 // Object.keys(game.clients).forEach(c => {
@@ -128,7 +133,6 @@ wsServer.on("request", request => {
                         }
                         clients[clientId].connection.send(JSON.stringify(payLoad))
                         return;
-                        // need to add a massage to the client
                     }
 
                     playerNum = playerPointer[Object.keys(game.clients).length];
@@ -152,31 +156,7 @@ wsServer.on("request", request => {
 
                     //start the game
                     if (Object.keys(game.clients).length === 4) {
-                        newGame(game,clients);
-                        // let newDeck = readyDeck();
-                        // Object.keys(game.clients).forEach((client) => {
-                        //     playerNum = game.clients[client].playerNum;
-                        //     let playerCards = dealCards(newDeck);
-                        //     game.cardsMap[playerNum] = playerCards;
-                        //     game.cardsMap["center"] = [];
-                        // });
-                        // Object.keys(game.clients).forEach((client) => {
-                        //     playerNum = game.clients[client].playerNum;
-                        //     screenedCards = screenCards(playerNum, game.cardsMap);
-                        //     payLoad = {
-                        //         "method": "updateCards",
-                        //         "cardsMap": screenedCards,
-                        //         "playerNum": playerNum,
-                        //         "turn": 'P1' /// need to delete
-                        //     }
-                        //     clients[client].connection.send(JSON.stringify(payLoad))
-                        //     payLoad = {
-                        //         "method": "suitBet",
-                        //         "turn": 'P1',
-                        //         suitBet: game.suitBets
-                        //     }
-                        //     clients[client].connection.send(JSON.stringify(payLoad))
-                        // })
+                        newGame(game, clients);
                     }
                 }
                 else {
@@ -209,6 +189,7 @@ wsServer.on("request", request => {
                     "method": "numBet",
                     sliceingSuit,
                     minBet,
+                    betWinner,
                     "turn": betWinner,
                     "playerPlayed": playerNum,
                     nickname: playerPlayedNickname
@@ -242,14 +223,14 @@ wsServer.on("request", request => {
                     clients[c].connection.send(JSON.stringify(payLoad))
                 })
             } else {
-                game.isUnder = _.sum(Object.values(game.numBets)) < 13 ;  
+                game.isUnder = _.sum(Object.values(game.numBets)) < 13;
                 payLoad = {
                     "method": "numBet",
                     "numBets": game.numBets,
                     nickname: playerPlayedNickname,
                     "turn": nextTurn[playerNum],
                     "finishBetting": true,
-                    isUnder : game.isUnder
+                    isUnder: game.isUnder
                 }
                 Object.keys(game.clients).forEach(c => {
                     clients[c].connection.send(JSON.stringify(payLoad))
@@ -292,19 +273,18 @@ wsServer.on("request", request => {
                 }
                 clients[client].connection.send(JSON.stringify(payLoad))
             })
-
-        }
-            if (messageFromClient.method === "finishGame") {
-                Object.keys(game.clients).forEach((client) => {
+            if (isGameFinished(game.cardsMap)){
+                Object.keys(game.clients).forEach((clientId) => {
                     game.scoreMap = scoreCaculator(game.numBets, messageFromClient.wins, game.scoreMap, game.isUnder)
                     payLoad = {
                         "method": "score",
                         "scoreMap": game.scoreMap
                     }
-                    clients[client].connection.send(JSON.stringify(payLoad))
+                    clients[clientId].connection.send(JSON.stringify(payLoad))
                 })
-
+    
                 newGame(game, clients);
+            }
         }
     })
     //generate a new clientId
@@ -324,7 +304,7 @@ wsServer.on("request", request => {
 
 
 
-const newGame = (game, clients) => {
+const newGame = (game, clients, startingPlayer = 'P1') => {
 
     let newDeck = readyDeck();
     Object.keys(game.clients).forEach((client) => {
@@ -337,17 +317,18 @@ const newGame = (game, clients) => {
         playerNum = game.clients[client].playerNum;
         screenedCards = screenCards(playerNum, game.cardsMap);
         payLoad = {
-            "method": "updateCards",
-            "cardsMap": screenedCards,
-            "playerNum": playerNum,
-            "turn": 'P1' /// need to delete
+            "method": "suitBet",
+            "turn": startingPlayer,
+            suitBet: game.suitBets
         }
         clients[client].connection.send(JSON.stringify(payLoad))
         payLoad = {
-            "method": "suitBet",
-            "turn": 'P1',
-            suitBet: game.suitBets
+            "method": "updateCards",
+            "cardsMap": screenedCards,
+            "playerNum": playerNum,
+            "turn": startingPlayer
         }
         clients[client].connection.send(JSON.stringify(payLoad))
     })
 }
+
