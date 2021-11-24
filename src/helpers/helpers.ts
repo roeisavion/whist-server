@@ -23,7 +23,7 @@ export const removeCard = (cardPlayed, currentHand) => {
 }
 
 export const getSuitBetWinner = (object, value) => {
-    return Object.keys(object).find(key => object[key] != value);
+    return Object.keys(object).find(key => object[key] != value) ;
 }
 
 export const scoreCaculator = (bets,wins,scoreMap,isUnder) => {

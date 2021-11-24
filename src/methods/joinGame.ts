@@ -1,8 +1,8 @@
 import { newGame } from "../helpers/newGame";
 
-export const joinGame = (clients, games, messageFromClient) => {
+export const joinGame = (clientId, clients, messageFromClient ,games, sliceingSuit) => {
     const playerPointer = { "0": "P1", "1": "P2", "2": "P3", "3": "P4" };
-    const clientId = messageFromClient.clientId;
+    clientId = messageFromClient.clientId;
     let payLoad;
     if (clients[clientId].hasOwnProperty('inGame')) {
         payLoad = {

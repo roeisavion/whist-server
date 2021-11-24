@@ -1,7 +1,7 @@
 import { gameGuid } from "../helpers/guid";
 
-export const createGame = (clients, games, messageFromClient) => {
-    const clientId = messageFromClient.clientId;
+export const createGame = (clientId, clients, messageFromClient ,games, sliceingSuit) => {
+    clientId = messageFromClient.clientId;
     const nickname = messageFromClient.nickname;
     let payLoad;
     if (clients[clientId].hasOwnProperty('inGame')) {
