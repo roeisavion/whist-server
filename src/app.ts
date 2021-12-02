@@ -1,9 +1,11 @@
-import { methodRouter } from "./methodrouter";
+import { methodRouter, methodRouter1 } from "./methodrouter";
 import { connectPlayer } from "./methods/connectPlayer";
 import { initServer } from "./server";
 
 const wsServer = initServer();
-let clients = {}, games = {};
+const router = new methodRouter1();
+// let clients = {}, games = {};
+// let clientId, sliceingSuit ;
 wsServer.on("request", request => {
     //connect
     const connection = request.accept(null, request.origin);
@@ -12,7 +14,8 @@ wsServer.on("request", request => {
     connection.on("close", () => console.log("closed!")) // need to handel
     connection.on("message", message => {
         const messageFromClient = JSON.parse(message.utf8Data)
-        methodRouter(connection,messageFromClient,clients, games)
+        // methodRouter(connection,messageFromClient,clients, games, clientId, sliceingSuit)
+        router.methodRouter(messageFromClient)
     })
-    connectPlayer(clients,connection)
+    router.connectPlayer(connection)
 })

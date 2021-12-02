@@ -3,7 +3,8 @@ import { newGame } from "../helpers/newGame";
 import { caculateRoundWinner} from '../helpers/gameFunctions';
 
 
-export const handelCardsUpdate = (clientId, clients, messageFromClient ,games, sliceingSuit) => {
+// export const handelCardsUpdate = (clientId, clients, messageFromClient ,games, sliceingSuit) => {
+export const handelCardsUpdate = (clientId, clients, messageFromClient ,games) => {
     const nextTurn = { P1: 'P2', P2: "P3", P3: 'P4', P4: 'P1' };
     let gameId  = clients[messageFromClient.clientId].inGame;
     let game = games[gameId];
@@ -17,7 +18,7 @@ export const handelCardsUpdate = (clientId, clients, messageFromClient ,games, s
     let turn = nextTurn[playerPlayed];
 
     if (game.cardsMap["center"].length === 4) {
-        let winCard = caculateRoundWinner(game.cardsMap["center"], sliceingSuit)
+        let winCard = caculateRoundWinner(game.cardsMap["center"], game.sliceingSuit)
         let winPlayer = winCard[1];
         game.winnedCards[winPlayer].push(winCard[0]);
         game.cardsMap["center"] = [];

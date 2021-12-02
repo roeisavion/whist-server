@@ -1,4 +1,5 @@
-export const leaveGame = (clientId, clients, messageFromClient ,games, sliceingSuit) => {
+// export const leaveGame = (clientId, clients, messageFromClient ,games, sliceingSuit) => {
+export const leaveGame = (clientId, clients, messageFromClient ,games) => {
     clientId = messageFromClient.clientId;
     let payLoad;
     if (clients[clientId].hasOwnProperty('inGame')) {

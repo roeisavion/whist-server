@@ -1,4 +1,4 @@
-import { connectPlayer } from "./methods/connectPlayer"
+import { clientGuid } from "./helpers/guid"
 import { createGame } from "./methods/createGame"
 import { joinGame } from "./methods/joinGame"
 import { leaveGame } from "./methods/leaveGame"
@@ -6,8 +6,46 @@ import { handelNumBet } from "./methods/numBets"
 import { handelSuitBet } from "./methods/suitBet"
 import { handelCardsUpdate } from "./methods/updateCards"
 
-export const methodRouter = (connection, messageFromClient, clients, games) => {
-    let clientId, sliceingSuit ;
+export class methodRouter1 {
+    // constructor(clients){
+    //     this.clients = clients;
+    // }
+    games = {} ;
+    clients = {};
+    clientId;
+    // sliceingSuit;
+    router = {
+        create: createGame,
+        join: joinGame,
+        leaveGame: leaveGame,
+        suitBet: handelSuitBet,
+        numBet: handelNumBet,
+        updateCards: handelCardsUpdate  // should Change to playerPlayed
+    }
+
+    methodRouter = (messageFromClient) => {
+        // this.router[messageFromClient.method](this.clientId, this.clients, messageFromClient ,this.games, this.sliceingSuit);
+        this.router[messageFromClient.method](this.clientId, this.clients, messageFromClient ,this.games);
+    }
+    connectPlayer = (connection) => {
+        const clientId = clientGuid();
+    
+        this.clients[clientId] = {
+            connection
+        }
+    
+        let payLoad = {
+            "method": "connect",
+            "clientId": clientId
+        }
+        //send back the client connect
+        connection.send(JSON.stringify(payLoad))
+    }
+
+}
+
+
+export const methodRouter = (connection, messageFromClient, clients, games,clientId, sliceingSuit) => {
     // const router = {
     //     connect: connectPlayer(clients, connection),
     //     create: createGame(clients, games, messageFromClient),
@@ -20,11 +58,10 @@ export const methodRouter = (connection, messageFromClient, clients, games) => {
     const router = {
         create: createGame,
         join: joinGame,
-        leave: leaveGame,
+        leaveGame: leaveGame,
         suitBet: handelSuitBet,
         numBet: handelNumBet,
         updateCards: handelCardsUpdate  // should Change to playerPlayed
     }
-    // router[messageFromClient.method](clientId, clients, games, sliceingSuit)
     router[messageFromClient.method](clientId, clients, messageFromClient ,games, sliceingSuit);
 }
