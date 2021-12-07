@@ -1,8 +1,9 @@
+import { game } from "../methods/types/clientToServer.model";
 import { dealCards, readyDeck } from "./deck";
 import { screenCards } from "./helpers";
 
 export const newGame = (game, clients, startingPlayer = 'P1') => {
-
+    cleanUp(game);
     let newDeck = readyDeck();
     let playerNum, payLoad;
     Object.keys(game.clients).forEach((client) => {
@@ -28,4 +29,11 @@ export const newGame = (game, clients, startingPlayer = 'P1') => {
         }
         clients[client].connection.send(JSON.stringify(payLoad))
     })
+}
+
+const cleanUp = (game : game) => {
+    game.sliceingSuit = null;
+    game.cardsMap = {};
+    game.numBets = {};
+    game.suitBets = {};
 }

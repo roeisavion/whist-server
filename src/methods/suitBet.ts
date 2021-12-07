@@ -1,7 +1,6 @@
 import { getSuit, getNumber, nextBettingPlayer } from "../helpers/gameFunctions";
 import { countValue, getSuitBetWinner } from "../helpers/helpers";
 
-// export const handelSuitBet = (clientId, clients, messageFromClient ,games, sliceingSuit) => {
 export const handelSuitBet = (clientId, clients, messageFromClient ,games) => {
     let payLoad;
     let gameId  = clients[messageFromClient.clientId].inGame;

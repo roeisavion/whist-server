@@ -1,6 +1,5 @@
 import { gameGuid } from "../helpers/guid";
 
-// export const createGame = (clientId, clients, messageFromClient ,games, sliceingSuit) => {
 export const createGame = (clientId, clients, messageFromClient ,games) => {
     clientId = messageFromClient.clientId;
     const nickname = messageFromClient.nickname;

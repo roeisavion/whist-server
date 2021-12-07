@@ -1,6 +1,5 @@
 import { newGame } from "../helpers/newGame";
 
-// export const joinGame = (clientId, clients, messageFromClient ,games, sliceingSuit) => {
 export const joinGame = (clientId, clients, messageFromClient ,games) => {
     const playerPointer = { "0": "P1", "1": "P2", "2": "P3", "3": "P4" };
     clientId = messageFromClient.clientId;

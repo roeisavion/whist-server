@@ -2,7 +2,6 @@ import * as _ from 'lodash';
 import { countValue } from "../helpers/helpers";
 import { game, NumBetFromclient } from './types/clientToServer.model';
 
-// export const handelNumBet = (clientId, clients, messageFromClient ,games, sliceingSuit) => {
 export const handelNumBet = (clientId, clients, messageFromClient : NumBetFromclient ,games ) => {
     const nextTurn = { P1: 'P2', P2: "P3", P3: 'P4', P4: 'P1' };
     let payLoad;

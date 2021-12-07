@@ -48,6 +48,6 @@ export const isGameFinished = (cardsMap) => {
     return isFinished;
 }
 
-export function getKeyByValue(object, value) {
-    return Object.keys(object).find(key => object[key] === value);
+export function clientIdByConnection(clients, connection) {
+    return Object.keys(clients).find(key => clients[key].connection === connection);
   }

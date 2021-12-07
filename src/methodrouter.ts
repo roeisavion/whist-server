@@ -7,13 +7,9 @@ import { handelSuitBet } from "./methods/suitBet"
 import { handelCardsUpdate } from "./methods/updateCards"
 
 export class methodRouter1 {
-    // constructor(clients){
-    //     this.clients = clients;
-    // }
     games = {} ;
     clients = {};
     clientId;
-    // sliceingSuit;
     router = {
         create: createGame,
         join: joinGame,
@@ -24,7 +20,6 @@ export class methodRouter1 {
     }
 
     methodRouter = (messageFromClient) => {
-        // this.router[messageFromClient.method](this.clientId, this.clients, messageFromClient ,this.games, this.sliceingSuit);
         this.router[messageFromClient.method](this.clientId, this.clients, messageFromClient ,this.games);
     }
     connectPlayer = (connection) => {
@@ -45,16 +40,7 @@ export class methodRouter1 {
 }
 
 
-export const methodRouter = (connection, messageFromClient, clients, games,clientId, sliceingSuit) => {
-    // const router = {
-    //     connect: connectPlayer(clients, connection),
-    //     create: createGame(clients, games, messageFromClient),
-    //     join: joinGame(clients, games, messageFromClient),
-    //     leave: leaveGame(clients, games, messageFromClient),
-    //     suitBet: handelSuitBet(clientId, clients, games, sliceingSuit),
-    //     NumBet: handelNumBet(clientId, clients, games),
-    //     updateCards: handelCardsUpdate (clientId, clients, games, sliceingSuit) // should Change to playerPlayed
-    // }
+export const methodRouter = (messageFromClient, clients, games,clientId) => {
     const router = {
         create: createGame,
         join: joinGame,
@@ -63,5 +49,5 @@ export const methodRouter = (connection, messageFromClient, clients, games,clien
         numBet: handelNumBet,
         updateCards: handelCardsUpdate  // should Change to playerPlayed
     }
-    router[messageFromClient.method](clientId, clients, messageFromClient ,games, sliceingSuit);
+    router[messageFromClient.method](clientId, clients, messageFromClient ,games);
 }

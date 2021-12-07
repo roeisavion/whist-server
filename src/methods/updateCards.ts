@@ -3,7 +3,6 @@ import { newGame } from "../helpers/newGame";
 import { caculateRoundWinner} from '../helpers/gameFunctions';
 
 
-// export const handelCardsUpdate = (clientId, clients, messageFromClient ,games, sliceingSuit) => {
 export const handelCardsUpdate = (clientId, clients, messageFromClient ,games) => {
     const nextTurn = { P1: 'P2', P2: "P3", P3: 'P4', P4: 'P1' };
     let gameId  = clients[messageFromClient.clientId].inGame;
