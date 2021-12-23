@@ -32,7 +32,8 @@ export const createGame = (clientId, clients, messageFromClient ,games) => {
         payLoad = {
             "method": "create",
             "gameId": gameId,
-            "playerNum": "P1"
+            "playerNum": "P1",
+            games
         }
 
         const con = clients[clientId].connection;
