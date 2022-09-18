@@ -33,7 +33,7 @@ export const createGame = (clientId, clients, messageFromClient ,games) => {
             "method": "create",
             "gameId": gameId,
             "playerNum": "P1",
-            games
+            "game" : games[gameId]
         }
 
         const con = clients[clientId].connection;
