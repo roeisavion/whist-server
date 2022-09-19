@@ -13,4 +13,5 @@ export interface game {
     clients: object
     sliceingSuit?: string
     cardsMap? : object
+    winnedCards: { P1: any[]; P2: any[]; P3: any[]; P4: any[]; };
 }

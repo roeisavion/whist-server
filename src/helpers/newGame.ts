@@ -25,15 +25,32 @@ export const newGame = (game, clients, startingPlayer = 'P1') => {
             "method": "updateCards",
             "cardsMap": screenedCards,
             "playerNum": playerNum,
-            "turn": startingPlayer
+            "turn": startingPlayer,
+            "winnedCards": game.winnedCards
         }
         clients[client].connection.send(JSON.stringify(payLoad))
     })
 }
 
-const cleanUp = (game : game) => {
+const cleanUp = (game: game) => {
     game.sliceingSuit = null;
     game.cardsMap = {};
-    game.numBets = {};
-    game.suitBets = {};
+    game.numBets = {
+        'P1': "haven't betted a suit yet",
+        'P2': "haven't betted a suit yet",
+        'P3': "haven't betted a suit yet",
+        'P4': "haven't betted a suit yet"
+    };
+    game.suitBets = {
+        'P1': "haven't a number betted yet",
+        'P2': "haven't a number betted yet",
+        'P3': "haven't a number betted yet",
+        'P4': "haven't a number betted yet"
+    };
+    game.winnedCards = {
+        'P1': [],
+        'P2': [],
+        'P3': [],
+        'P4': []
+    }
 }
