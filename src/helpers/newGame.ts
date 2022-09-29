@@ -35,17 +35,17 @@ export const newGame = (game, clients, startingPlayer = 'P1') => {
 const cleanUp = (game: game) => {
     game.sliceingSuit = null;
     game.cardsMap = {};
-    game.numBets = {
+    game.suitBets = {
         'P1': "haven't betted a suit yet",
         'P2': "haven't betted a suit yet",
         'P3': "haven't betted a suit yet",
         'P4': "haven't betted a suit yet"
     };
-    game.suitBets = {
-        'P1': "haven't a number betted yet",
-        'P2': "haven't a number betted yet",
-        'P3': "haven't a number betted yet",
-        'P4': "haven't a number betted yet"
+    game.numBets = {
+        'P1': null,
+        'P2': null,
+        'P3': null,
+        'P4': null
     };
     game.winnedCards = {
         'P1': [],

@@ -20,11 +20,13 @@ export const handelSuitBet = (clientId, clients, messageFromClient, games) => {
         let betWinner = getSuitBetWinner(game.suitBets, 'PASS')
         game.sliceingSuit = getSuit(game.suitBets[betWinner]);
         let minBet = getNumber(game.suitBets[betWinner]);
+        game.numBets[betWinner] = minBet;
         payLoad = {
             "method": "numBet",
             sliceingSuit: game.sliceingSuit,
             minBet,
             betWinner,
+            "numBets": game.numBets,
             "turn": betWinner,
             "playerPlayed": playerNum,
             nickname: playerPlayedNickname
