@@ -1,7 +1,7 @@
-import {cardsNumberOrder, suitOrder} from './deck.js'
+import { cardsNumberOrder, suitOrder } from './deck'
 
-export const getSuit = ((cardString) => cardString.charAt(cardString.length-1));
-export const getNumber = ((cardString) => cardString.slice(0,cardString.length-1));
+export const getSuit = ((cardString) => cardString.charAt(cardString.length - 1));
+export const getNumber = ((cardString) => cardString.slice(0, cardString.length - 1));
 
 export const caculateRoundWinner = (centerCards, sliceingSuit) => {
     let firstCard = centerCards[0];
@@ -11,34 +11,34 @@ export const caculateRoundWinner = (centerCards, sliceingSuit) => {
     for (let i = 1; i < 4; i++) {
         let card = centerCards[i];
         let cardSuit = getSuit(card[0])
-        if(cardSuit === sliceingSuit){
-            if(getSuit(bigCard[0]) !== sliceingSuit){
+        if (cardSuit === sliceingSuit) {
+            if (getSuit(bigCard[0]) !== sliceingSuit) {
                 bigCard = card;
             }
-            else{
+            else {
                 if (cardsNumberOrder.indexOf(getNumber(card[0])) > cardsNumberOrder.indexOf(getNumber(bigCard[0]))) {
                     bigCard = card;
                 }
             }
         }
-        else{   
-            if (cardSuit === firstSuit) {
+        else {
+            if (cardSuit === firstSuit && getSuit(bigCard[0]) !== sliceingSuit) {
                 if (cardsNumberOrder.indexOf(getNumber(card[0])) > cardsNumberOrder.indexOf(getNumber(bigCard[0]))) {
                     bigCard = card;
                 }
             }
         }
-        
-        
+
+
     }
     return bigCard;
 }
 
-const nextTurn = { P1: 'P2', P2: "P3", P3: 'P4', P4: 'P1' } 
+const nextTurn = { P1: 'P2', P2: "P3", P3: 'P4', P4: 'P1' }
 
-export const nextBettingPlayer = (suitBet,playerPlayed) => {
+export const nextBettingPlayer = (suitBet, playerPlayed) => {
     let nextPlayer = nextTurn[playerPlayed];
-    while(suitBet[nextPlayer] == "PASS"){
+    while (suitBet[nextPlayer] == "PASS") {
         nextPlayer = nextTurn[nextPlayer];
     }
     return nextPlayer;
