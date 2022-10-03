@@ -1,5 +1,6 @@
 import { getSuit, getNumber, nextBettingPlayer } from "../helpers/gameFunctions";
 import { countValue, getSuitBetWinner } from "../helpers/helpers";
+import { newGame } from "../helpers/newGame";
 
 export const handelSuitBet = (clientId, clients, messageFromClient, games) => {
     let payLoad;
@@ -12,11 +13,13 @@ export const handelSuitBet = (clientId, clients, messageFromClient, games) => {
     let betCount = Object.values(game.suitBets);
     if (countValue('PASS', betCount) === 4) {
         //reStartGame
-        payLoad = {
-            "method": "restart"
-        }
+        // payLoad = {
+        //     "method": "restart"
+        // }
+        newGame(game, clients);
+        return
     }
-    if (countValue('PASS', betCount) === 3 && countValue(null, betCount) === 0) {
+    if (countValue('PASS', betCount) === 3 && countValue("haven't betted a suit yet", betCount) === 0) {
         let betWinner = getSuitBetWinner(game.suitBets, 'PASS')
         game.sliceingSuit = getSuit(game.suitBets[betWinner]);
         let minBet = getNumber(game.suitBets[betWinner]);

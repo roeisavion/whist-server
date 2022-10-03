@@ -12,7 +12,7 @@ export const caculateRoundWinner = (centerCards, sliceingSuit) => {
         let card = centerCards[i];
         let cardSuit = getSuit(card[0])
         if(cardSuit === sliceingSuit){
-            if(getSuit(bigCard) !== sliceingSuit){
+            if(getSuit(bigCard[0]) !== sliceingSuit){
                 bigCard = card;
             }
             else{
