@@ -21,7 +21,7 @@ export const createGame = (clientId, clients, messageFromClient ,games) => {
                     nickname
                 }
             },
-            "winnedCards": { P1: [], P2: [], P3: [], P4: [] },
+            "winnedCards": { P1: 0, P2: 0, P3: 0, P4: 0},
             "suitBets": { P1: null, P2: null, P3: null, P4: null },
             "numBets": { P1: null, P2: null, P3: null, P4: null },
             "cardsMap": {}

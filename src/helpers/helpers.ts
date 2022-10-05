@@ -26,7 +26,7 @@ export const getSuitBetWinner = (object, value) => {
     return Object.keys(object).find(key => object[key] != value) ;
 }
 
-export const scoreCaculator = (bets,wins,scoreMap : object ,isUnder : boolean) => {
+export const scoreCaculator = (bets: object, wins: object,scoreMap : object ,isUnder : boolean) => {
     let diff;
     let zeroScore = isUnder ? 50 : 25;
     Object.keys(bets).forEach(p => {
@@ -51,3 +51,11 @@ export const isGameFinished = (cardsMap) => {
 export function clientIdByConnection(clients, connection) {
     return Object.keys(clients).find(key => clients[key].connection === connection);
   }
+
+export const arraysLength = (winnedCards : object) => {
+    let newObject;
+    Object.keys(winnedCards).forEach((p) => {
+        newObject[p] = winnedCards[p].length;
+    })
+    return newObject;
+}

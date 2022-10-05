@@ -19,7 +19,8 @@ export const handelCardsUpdate = (clientId, clients, messageFromClient ,games) =
     if (game.cardsMap["center"].length === 4) {
         let winCard = caculateRoundWinner(game.cardsMap["center"], game.sliceingSuit)
         let winPlayer = winCard[1];
-        game.winnedCards[winPlayer].push(winCard[0]);
+        // game.winnedCards[winPlayer].push(winCard[0]);
+        game.winnedCards[winPlayer] +=1
         game.cardsMap["center"] = [];
         turn = winPlayer;
     }

@@ -5,11 +5,11 @@ describe('scoreCaculator test', () => {
 
     test('scoreCaculator 1', () => {
         isUnder = false;
-        scoreMap = { 
+        scoreMap = {
             'P1': 0,
             'P2': 0,
             'P3': 0,
-            'P4': 0 
+            'P4': 0
         }
         numBets = {
             'P1': 6,
@@ -30,13 +30,13 @@ describe('scoreCaculator test', () => {
             'P4': 25
         };
 
-        expect(scoreCaculator(numBets,wins,scoreMap,isUnder)).toEqual(expectedScoreMap)
+        expect(scoreCaculator(numBets, wins, scoreMap, isUnder)).toEqual(expectedScoreMap)
 
     });
 
     test('scoreCaculator 2', () => {
         isUnder = true;
-        scoreMap = { 
+        scoreMap = {
             'P1': -20,
             'P2': 46,
             'P3': -10,
@@ -61,19 +61,21 @@ describe('scoreCaculator test', () => {
             'P4': 15
         };
 
-        expect(scoreCaculator(numBets,wins,scoreMap,isUnder)).toEqual(expectedScoreMap)
+        expect(scoreCaculator(numBets, wins, scoreMap, isUnder)).toEqual(expectedScoreMap)
 
     });
 
+})
+
+describe("isGameFinished tests", () => {
+
     test('game shouldnt finish', () => {
-        const cardsMap = {P1: ["8C"], center: [], P2: 0, P3: 0, P4: 0}
+        const cardsMap = { P1: ["8C"], center: [], P2: 0, P3: 0, P4: 0 }
         expect(isGameFinished(cardsMap)).toEqual(false)
     });
 
     test('game should finish', () => {
-        const cardsMap = {P1: [], center: [], P2: 0, P3: 0, P4: 0}
+        const cardsMap = { P1: [], center: [], P2: 0, P3: 0, P4: 0 }
         expect(isGameFinished(cardsMap)).toEqual(true)
     });
 })
-
-

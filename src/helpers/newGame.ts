@@ -54,9 +54,9 @@ const cleanUp = (game: game) => {
         'P4': null
     };
     game.winnedCards = {
-        'P1': [],
-        'P2': [],
-        'P3': [],
-        'P4': []
+        'P1': 0,
+        'P2': 0,
+        'P3': 0,
+        'P4': 0
     }
 }
