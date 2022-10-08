@@ -1,4 +1,5 @@
 import { scoreCaculator, isGameFinished } from './helpers'
+import { newGame } from './newGame';
 
 describe('scoreCaculator test', () => {
     let isUnder, scoreMap, numBets, wins, expectedScoreMap;
@@ -78,4 +79,8 @@ describe("isGameFinished tests", () => {
         const cardsMap = { P1: [], center: [], P2: 0, P3: 0, P4: 0 }
         expect(isGameFinished(cardsMap)).toEqual(true)
     });
+
+    // test("new game", () => {
+    //     newGame()
+    // })
 })

@@ -52,10 +52,10 @@ export function clientIdByConnection(clients, connection) {
     return Object.keys(clients).find(key => clients[key].connection === connection);
   }
 
-export const arraysLength = (winnedCards : object) => {
-    let newObject;
-    Object.keys(winnedCards).forEach((p) => {
-        newObject[p] = winnedCards[p].length;
-    })
-    return newObject;
-}
+// export const arraysLength = (winnedCards : object) => {
+//     let newObject;
+//     Object.keys(winnedCards).forEach((p) => {
+//         newObject[p] = winnedCards[p].length;
+//     })
+//     return newObject;
+// }

@@ -1,6 +1,7 @@
-import type { Config } from '@jest/types';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 // Sync object
-const config: Config.InitialOptions = {
+const config = {
     roots: [
         "<rootDir>/src"
     ],
@@ -9,6 +10,6 @@ const config: Config.InitialOptions = {
     testMatch: [
         "**/__tests__/**/*.+(ts|tsx)",
         "**/?(*.)+(spec|test).+(ts|tsx)"
-      ]
+    ]
 };
-export default config;
+exports.default = config;

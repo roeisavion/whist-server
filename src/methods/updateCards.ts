@@ -17,6 +17,20 @@ export const handelCardsUpdate = (clientId, clients, messageFromClient ,games) =
     let turn = nextTurn[playerPlayed];
 
     if (game.cardsMap["center"].length === 4) {
+
+        Object.keys(game.clients).forEach((client) => {
+            let playerNum = game.clients[client].playerNum;
+            let screenedCards = screenCards(playerNum, game.cardsMap);
+            payLoad = {
+                "method": "updateCards",
+                "cardsMap": screenedCards,
+                "playerNum": playerNum,
+                "turn": null,
+                "winnedCards": game.winnedCards
+            }
+            clients[client].connection.send(JSON.stringify(payLoad))
+        })
+
         let winCard = caculateRoundWinner(game.cardsMap["center"], game.sliceingSuit)
         let winPlayer = winCard[1];
         // game.winnedCards[winPlayer].push(winCard[0]);
