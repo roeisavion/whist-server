@@ -53,7 +53,7 @@ export const handelCardsUpdate = (clientId, clients, messageFromClient ,games) =
     })
     if (isGameFinished(game.cardsMap)) {
         Object.keys(game.clients).forEach((clientId) => {
-            game.scoreMap = scoreCaculator(game.numBets, messageFromClient.wins, game.scoreMap, game.isUnder)
+            game.scoreMap = scoreCaculator(game.numBets, game.winnedCards, game.scoreMap, game.isUnder)
             payLoad = {
                 "method": "score",
                 "scoreMap": game.scoreMap
