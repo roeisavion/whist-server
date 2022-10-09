@@ -1,5 +1,5 @@
 import { game } from "../methods/types/clientToServer.model";
-import { dealCards, readyDeck } from "./deck";
+import { dealCards, readyDeck } from "./deck"
 import { screenCards } from "./helpers";
 
 export const newGame = (game: game, clients, startingPlayer = 'P1') => {
