@@ -1,10 +1,10 @@
 import { clientIdByConnection } from "./helpers/helpers";
-import { methodRouter1 } from "./methodrouter";
+import { methodRouterClass } from "./methodrouter";
 import { leaveGame } from "./methods/leaveGame";
 import { initServer } from "./server";
 
 const wsServer = initServer();
-const router = new methodRouter1();
+const router = new methodRouterClass();
 wsServer.on("request", request => {
     //connect
     const connection = request.accept(null, request.origin);

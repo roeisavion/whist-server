@@ -6,7 +6,7 @@ import { handelNumBet } from "./methods/numBets"
 import { handelSuitBet } from "./methods/suitBet"
 import { handelCardsUpdate } from "./methods/updateCards"
 
-export class methodRouter1 {
+export class methodRouterClass {
     games = {} ;
     clients = {};
     clientId;
