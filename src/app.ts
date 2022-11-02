@@ -3,7 +3,7 @@ import { methodRouterClass } from "./methodrouter";
 import { leaveGame } from "./methods/leaveGame";
 import { initServer } from "./server";
 
-const wsServer = initServer();
+const [wsServer, app] = initServer();
 const router = new methodRouterClass();
 wsServer.on("request", request => {
     //connect
@@ -11,8 +11,8 @@ wsServer.on("request", request => {
     //need to give connection clientID
     connection.on("open", () => console.log("opened!"))
     connection.on("close", () => {
-        let clientId = clientIdByConnection(router.clients,connection)
-        leaveGame(clientId,router.clients,{clientId},router.games)
+        let clientId = clientIdByConnection(router.clients, connection)
+        leaveGame(clientId, router.clients, { clientId }, router.games)
         console.log("closed!");
     }) // need to handel
     connection.on("message", message => {
@@ -20,4 +20,12 @@ wsServer.on("request", request => {
         router.methodRouter(messageFromClient)
     })
     router.connectPlayer(connection)
+})
+
+app.get('/', (req, res) => {
+    res.send('Hello World!')
+})
+
+app.get('/games', (req, res) => {
+    res.send(router.games)
 })
