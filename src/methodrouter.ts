@@ -42,7 +42,7 @@ export class methodRouterClass {
 
 export const methodRouter = (messageFromClient, clients, games,clientId) => {
     const router = {
-        create: createGame,
+        create: createGame, //clean
         join: joinGame,
         leaveGame: leaveGame,
         suitBet: handelSuitBet,

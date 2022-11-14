@@ -9,11 +9,11 @@ export const initServer = () => {
     const app: any = express()
 
     const credentials  = {
-        key: fs.readFileSync('./whist-server-key.pem'),
-        // cert: fs.readFileSync('test/fixtures/keys/agent2-cert.pem')
+        key: fs.readFileSync('./myCA.pem'),
+        cert: fs.readFileSync('./myCA.key')
       };
 
-    const httpServer = https.createServer(credentials,app);
+    const httpServer = https.createServer(credentials,app)
     // const httpServer = http.createServer(app);
     const websocketServer = ws.server;
     const wsServer = new websocketServer({
