@@ -50,7 +50,7 @@ export const joinGame = (clientId, clients, messageFromClient ,games ) => {
 
 
             //start the game
-            if (Object.keys(game.clients).length === 4) {
+            if (Object.keys(game.clients).length === 4 && !game.isStarted) {
                 newGame(game, clients);
             }
         }

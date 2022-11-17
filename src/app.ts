@@ -18,6 +18,7 @@ wsServer.on("request", request => {
     connection.on("message", message => {
         const messageFromClient = JSON.parse(message.utf8Data)
         router.methodRouter(messageFromClient)
+        console.log(messageFromClient);
     })
     router.connectPlayer(connection)
 })

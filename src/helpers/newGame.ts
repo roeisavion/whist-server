@@ -4,6 +4,7 @@ import { screenCards } from "./helpers";
 
 export const newGame = (game: game, clients, startingPlayer = 'P1') => {
     cleanUp(game);
+    game.isStarted = true;
     game.scoreMap ? null : game.scoreMap = {
         'P1': 0,
         'P2': 0,

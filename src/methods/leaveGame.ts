@@ -16,8 +16,9 @@ export const leaveGame = (clientId, clients, messageFromClient ,games) => {
             game : games[gameId]
         }
         Object.keys(games[gameId].clients).forEach(c => {
-            clients[c].connection.send(JSON.stringify(payLoad))
+            clients[c].connection.send(JSON.stringify(payLoad));
         })
+        clients[clientId].connection.send(JSON.stringify(payLoad));
     }
     else {
         payLoad = {
