@@ -47,7 +47,7 @@ export const methodRouter = (messageFromClient, clients, games,clientId) => {
         leaveGame: leaveGame,
         suitBet: handelSuitBet,
         numBet: handelNumBet,
-        updateCards: handelCardsUpdate  // should Change to playerPlayed
+        updateCards: handelCardsUpdate,
     }
     router[messageFromClient.method](clientId, clients, messageFromClient ,games);
 }

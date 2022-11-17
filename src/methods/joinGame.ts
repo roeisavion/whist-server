@@ -1,6 +1,7 @@
 import { newGame } from "../helpers/newGame";
+import { game } from "./types/game.model";
 
-export const joinGame = (clientId, clients, messageFromClient ,games) => {
+export const joinGame = (clientId, clients, messageFromClient ,games ) => {
     const playerPointer = { "0": "P1", "1": "P2", "2": "P3", "3": "P4" };
     clientId = messageFromClient.clientId;
     let payLoad;
@@ -17,7 +18,7 @@ export const joinGame = (clientId, clients, messageFromClient ,games) => {
             const gameId = messageFromClient.gameId;
             const nickname = messageFromClient.nickname;
             clients[clientId].inGame = gameId;
-            let game = games[gameId];
+            let game : game = games[gameId];
             if (Object.keys(game.clients).length >= 4) {
                 //sorry max players reach
                 payLoad = {
@@ -28,17 +29,18 @@ export const joinGame = (clientId, clients, messageFromClient ,games) => {
                 return;
             }
 
-            let playerNum = playerPointer[Object.keys(game.clients).length];
+            // let playerNum = playerPointer[Object.keys(game.clients).length];
+            const playerNum = game.availablePlayerNums.pop();
             game.clients[clientId] = {
-                "playerNum": playerNum,
+                playerNum,
                 nickname
             }
 
             payLoad = {
                 "method": "playerJoined",
-                "game": game,
-                "clientId": clientId,
-                "playerNum": playerNum,
+                game,
+                clientId,
+                playerNum,
                 nickname
             }
             //loop through all clients and tell them that people has joined

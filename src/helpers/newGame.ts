@@ -1,14 +1,14 @@
-import { game } from "../methods/types/clientToServer.model";
+import { game } from "../methods/types/game.model";
 import { dealCards, readyDeck } from "./deck";
 import { screenCards } from "./helpers";
 
 export const newGame = (game: game, clients, startingPlayer = 'P1') => {
     cleanUp(game);
     game.scoreMap ? null : game.scoreMap = {
-        'P1': null,
-        'P2': null,
-        'P3': null,
-        'P4': null
+        'P1': 0,
+        'P2': 0,
+        'P3': 0,
+        'P4': 0
     };
     let newDeck = readyDeck();
     let playerNum, payLoad;
